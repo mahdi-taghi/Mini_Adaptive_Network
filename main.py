@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import Perceptron
 from sklearn.metrics import accuracy_score
 import itertools
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 
 #import dataset
 iris = load_iris()
@@ -210,3 +212,29 @@ for i, adaline in enumerate(adalines):
 for i, adaline in enumerate(adalines):
     plot_decision_regions(X_test[:, :2], np.where(y_test == i, 1, -1), classifier=adaline,
                           title=f'Adaline - Testing set for class {i}', filename=f'adaline_testing_set_class_{i}.png')
+
+
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+y = np.array([0, 1, 1, 0])
+
+model = Sequential()
+model.add(Dense(2, input_dim=2, activation='relu'))  # hidden layer with 2 neurons
+model.add(Dense(1, activation='sigmoid'))  # output layer
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+history = model.fit(X, y, epochs=1000, verbose=0)
+
+loss, accuracy = model.evaluate(X, y)
+print(f'Accuracy: {accuracy * 100:.2f}%')
+
+predictions = model.predict(X)
+print(f'Predictions: \n{predictions}')
+
+plt.plot(history.history['loss'])
+plt.title('Model Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.savefig('model_loss.png')
+
+plt.show()
